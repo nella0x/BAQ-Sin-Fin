@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BAQ SIN FIN | Vive Barranquilla</title>
+<meta name="description" content="Guía turística interactiva de Barranquilla: lugares, cultura, Carnaval, naturaleza, gastronomía, artesanías, emprendimientos y rutas.">
+<link rel="preconnect" href="https://unpkg.com">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--wine:#741633;--wine2:#a9284e;--gold:#f3c64e;--ink:#17191d;--muted:#687078;--paper:#fffaf3;--line:#eadfd3;--card:#fff;--green:#17745c}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--paper);color:var(--ink)}
+body.dark{--paper:#111318;--card:#191c22;--ink:#f4f4f4;--muted:#b6bcc4;--line:#30343b}
+a{text-decoration:none;color:inherit}button,input,select{font:inherit}
+.top{position:fixed;right:18px;bottom:18px;z-index:50;width:48px;height:48px;border:0;border-radius:50%;background:var(--gold);font-weight:900;cursor:pointer}
+.hero{min-height:720px;display:grid;place-items:center;position:relative;overflow:hidden;color:white;background:
+linear-gradient(125deg,rgba(9,12,18,.9),rgba(116,22,51,.65)),
+url("https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=2200&q=85") center/cover}
+.hero:before{content:"";position:absolute;width:620px;height:620px;border:1px solid rgba(243,198,78,.38);border-radius:50%;right:-180px;top:-160px;box-shadow:0 0 0 70px rgba(243,198,78,.03),0 0 0 140px rgba(243,198,78,.02)}
+.hero-inner{width:min(1150px,90%);position:relative;z-index:2;padding:100px 0}
+.badge{display:inline-flex;gap:8px;align-items:center;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:8px 14px;backdrop-filter:blur(8px);font-size:13px;font-weight:800;letter-spacing:1px}
+.hero h1{font-size:clamp(58px,11vw,132px);line-height:.78;margin:24px 0 30px;letter-spacing:-5px}
+.hero h1 span{color:var(--gold)}.hero p{max-width:760px;font-size:clamp(18px,2.4vw,24px);line-height:1.55;color:#f4f4f4}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:25px}.btn{border:0;border-radius:999px;padding:14px 20px;font-weight:900;cursor:pointer;display:inline-block}.gold{background:var(--gold);color:#211c10}.glass{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.35);color:white}
+.stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:45px}.stat{padding:13px 17px;border-radius:16px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(7px)}.stat b{display:block;font-size:20px;color:var(--gold)}
+nav{position:sticky;top:0;z-index:40;background:rgba(255,250,243,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);display:flex;gap:18px;align-items:center;padding:11px 4%;overflow:auto}
+.dark nav{background:rgba(17,19,24,.94)}nav a{white-space:nowrap;font-size:13px;font-weight:900}nav .spacer{flex:1}.iconbtn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;cursor:pointer}
+main{max-width:1450px;margin:auto}section{padding:78px 6%}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:28px}h2{font-size:clamp(32px,5vw,60px);margin:0 0 10px;line-height:.98}.lead{color:var(--muted);line-height:1.7;max-width:800px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:25px 0}.toolbar input{flex:1;min-width:230px}.toolbar input,.toolbar select{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:13px 15px;border-radius:13px}
+.filters{display:flex;gap:8px;flex-wrap:wrap}.filter{background:var(--card);border:1px solid var(--line);padding:9px 13px;border-radius:999px;cursor:pointer}.filter.active{background:var(--wine);color:white;border-color:var(--wine)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.05);display:flex;flex-direction:column}.photo{height:185px;background:linear-gradient(135deg,var(--wine),#20242b);position:relative;display:flex;align-items:flex-end;padding:18px;color:white}.photo .emoji{font-size:45px}.heart{position:absolute;right:13px;top:13px;border:0;background:rgba(0,0,0,.35);color:white;width:38px;height:38px;border-radius:50%;cursor:pointer}.body{padding:19px;display:flex;flex-direction:column;gap:9px;flex:1}.tag{font-size:11px;letter-spacing:1px;font-weight:900;color:var(--wine);background:#f5e7d1;padding:5px 9px;border-radius:999px;width:max-content}.body h3{font-size:22px;margin:0}.body p{color:var(--muted);line-height:1.55;margin:0}.cardlinks{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap;padding-top:8px}.cardlinks a,.cardlinks button{font-weight:900;color:var(--wine);border:0;background:none;padding:0;cursor:pointer}
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}.panel{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:28px}.map{height:560px;border-radius:22px;overflow:hidden;border:1px solid var(--line)}
+.routegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.route{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px}.route .num{font-size:45px;font-weight:1000;color:var(--gold)}.route h3{margin:4px 0 10px}.route li{margin:9px 0;color:var(--muted);line-height:1.5}
+.feature{background:linear-gradient(135deg,#201d20,#741633);color:white;border-radius:32px;padding:38px}.feature h2{color:white}.feature p{color:#ece9e8}.feature .tag{background:rgba(243,198,78,.16);color:var(--gold)}
+.itinerary{display:grid;grid-template-columns:1fr 1fr;gap:20px}.day{border:1px solid var(--line);border-radius:22px;background:var(--card);padding:23px}.time{border-left:3px solid var(--gold);padding-left:14px;margin:14px 0}.time b{color:var(--wine)}
+.directory{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:15px}.biz{padding:22px;border:1px solid var(--line);background:var(--card);border-radius:20px}.biz small{color:var(--wine);font-weight:900}.biz h3{margin:7px 0}.biz p{color:var(--muted);line-height:1.5}
+.tipgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.tip{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:21px}.tip .big{font-size:31px}.tip p{color:var(--muted);line-height:1.5}
+.cta{text-align:center;background:var(--gold);border-radius:32px;padding:55px 20px}.cta h2{max-width:800px;margin:auto}.cta p{max-width:650px;margin:18px auto 25px;line-height:1.6}
+footer{background:#15171b;color:#fff;padding:60px 6%}.footergrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px}.small{font-size:13px;color:#aeb4bc;line-height:1.6}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center;padding:20px}.modal.open{display:flex}.modalbox{max-width:650px;width:100%;background:var(--card);color:var(--ink);border-radius:26px;padding:28px;max-height:85vh;overflow:auto}.close{float:right;border:0;background:none;font-size:26px;cursor:pointer;color:var(--ink)}
+.empty{padding:30px;text-align:center;border:1px dashed var(--line);border-radius:20px;color:var(--muted);grid-column:1/-1}
+@media(max-width:900px){.split,.itinerary{grid-template-columns:1fr}.routegrid{grid-template-columns:1fr}.tipgrid{grid-template-columns:1fr 1fr}.footergrid{grid-template-columns:1fr}.map{height:400px}}
+@media(max-width:560px){section{padding:55px 5%}.hero{min-height:650px}.hero h1{letter-spacing:-3px}.tipgrid{grid-template-columns:1fr}.stats{display:grid;grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<button class="top" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<header class="hero">
+ <div class="hero-inner">
+  <div class="badge">✦ GUÍA TURÍSTICA INTERACTIVA · BARRANQUILLA</div>
+  <h1>BAQ<br><span>SIN FIN</span></h1>
+  <p>Una ciudad no se visita solamente: <b>se siente</b>. Descubre el río, el Caribe, el Carnaval, los barrios, los sabores, los artistas, los artesanos y las historias que hacen de Barranquilla un destino para recordar.</p>
+  <div class="actions"><a class="btn gold" href="#explorar">Empezar el viaje →</a><a class="btn glass" href="#rutas">Tengo poco tiempo</a></div>
+  <div class="stats"><div class="stat"><b>5,5 km</b>Gran Malecón</div><div class="stat"><b>365 días</b>Cultura y Carnaval</div><div class="stat"><b>∞</b>Historias por descubrir</div></div>
+ </div>
+</header>
+
+<nav>
+ <a href="#explorar">EXPLORAR</a><a href="#mapa">MAPA</a><a href="#cultura">CULTURA</a><a href="#sabores">SABORES</a><a href="#emprende">EMPRENDE</a><a href="#rutas">RUTAS</a><a href="#tips">TIPS</a>
+ <span class="spacer"></span><button class="iconbtn" onclick="toggleDark()" title="Modo oscuro">◐</button><button class="iconbtn" onclick="toggleLang()" id="langBtn">EN</button>
+</nav>
+
+<main>
+<section id="explorar">
+ <div class="sectionhead"><div><h2 id="exploreTitle">Descubre tu Barranquilla</h2><p class="lead">Explora por categorías, guarda tus favoritos y abre cada lugar directamente en el mapa.</p></div></div>
+ <div class="toolbar"><input id="search" placeholder="🔎 Busca un lugar, museo, parque, playa..."><select id="sort"><option value="all">Ordenar: recomendados</option><option value="az">A → Z</option></select></div>
+ <div class="filters" id="filters"></div>
+ <div class="grid" id="placesGrid" style="margin-top:20px"></div>
+</section>
+
+<section id="mapa">
+ <div class="sectionhead"><div><h2>🗺️ Barranquilla, a tu manera</h2><p class="lead">Selecciona un punto del mapa para descubrirlo. Los marcadores usan coordenadas aproximadas y se pueden reemplazar por las de tus propios emprendimientos.</p></div></div>
+ <div class="split"><div class="map" id="map"></div><div class="panel"><h3>📍 Cómo usarlo</h3><p class="lead">Toca un marcador para ver el lugar y abrir la ubicación en Google Maps.</p><hr style="border:0;border-top:1px solid var(--line);margin:22px 0"><h3>⭐ Tus favoritos</h3><p id="favText" class="lead">Todavía no has guardado lugares.</p><button class="btn" style="background:var(--wine);color:#fff" onclick="showFavorites()">Ver favoritos</button></div></div>
+</section>
+
+<section id="cultura">
+ <div class="feature"><span class="tag">IDENTIDAD</span><h2>🎭 Barranquilla tiene una historia que suena</h2>
+ <p class="lead">El Carnaval conecta música, danza, personajes, disfraces y memoria. Pero la cultura barranquillera también vive en sus barrios, museos, arquitectura, arte urbano y tradiciones familiares.</p>
+ <div class="grid" style="margin-top:25px">
+  <div><h3>🎺 Carnaval</h3><p>Casa del Carnaval, Museo del Carnaval y los espacios de Barrio Abajo permiten acercarse a esta tradición.</p></div>
+  <div><h3>🎨 Museo a Cielo Abierto</h3><p>Arte, murales e historia convierten calles de Barrio Abajo y El Prado en una experiencia urbana.</p></div>
+  <div><h3>🏛️ Patrimonio</h3><p>Centro Histórico, El Prado, Plaza de la Aduana, Plaza de La Paz y antiguas edificaciones cuentan la transformación de la ciudad.</p></div>
+ </div></div>
+</section>
+
+<section id="sabores">
+ <div class="sectionhead"><div><h2>🍴 Comer Barranquilla</h2><p class="lead">La gastronomía es una forma de conocer la ciudad. Usa esta sección para presentar platos, mercados, restaurantes y recetas de familias barranquilleras.</p></div></div>
+ <div class="grid">
+  <div class="card"><div class="photo"><span class="emoji">🥟</span></div><div class="body"><span class="tag">TRADICIÓN</span><h3>Carimañola</h3><p>Yuca rellena, uno de los sabores que conectan a Barranquilla con la cocina del Caribe.</p></div></div>
+  <div class="card"><div class="photo"><span class="emoji">🥚</span></div><div class="body"><span class="tag">CARIBE</span><h3>Arepa de huevo</h3><p>Un clásico costeño para incluir en una ruta gastronómica.</p></div></div>
+  <div class="card"><div class="photo"><span class="emoji">🍚</span></div><div class="body"><span class="tag">RECETA LOCAL</span><h3>Arroz de lisa</h3><p>Sabores del río y del Caribe en un plato de tradición regional.</p></div></div>
+  <div class="card"><div class="photo"><span class="emoji">🥥</span></div><div class="body"><span class="tag">DULCES</span><h3>Coco y dulcería</h3><p>Cocadas y dulces tradicionales que también pueden convertirse en souvenirs.</p></div></div>
+ </div>
+</section>
+
+<section id="emprende">
+ <div class="sectionhead"><div><h2>🧵 La ciudad que emprende</h2><p class="lead">Aquí está una de las ideas fuertes del concurso: no solo mostrar Barranquilla, sino <b>conectar al turista con quienes hacen ciudad</b>.</p></div></div>
+ <div class="directory" id="bizGrid"></div>
+ <p class="small" style="margin-top:20px">⚠️ Los datos de contacto de los emprendimientos deben ser agregados y verificados por el equipo antes de publicar. La página está diseñada para convertir esta sección en un directorio real.</p>
+</section>
+
+<section id="rutas">
+ <div class="sectionhead"><div><h2>🧭 Elige tu aventura</h2><p class="lead">No todos los turistas tienen el mismo tiempo. Por eso BAQ Sin Fin propone recorridos diferentes.</p></div></div>
+ <div class="routegrid">
+  <div class="route"><div class="num">01</div><h3>BAQ en 1 día</h3><ol><li>Centro Histórico + Plaza de San Nicolás</li><li>Museo del Carnaval + Barrio Abajo</li><li>Ventana al Mundo</li><li>Atardecer en Gran Malecón</li></ol><button class="btn" style="background:var(--wine);color:white" onclick="buildRoute(1)">Armar ruta</button></div>
+  <div class="route"><div class="num">02</div><h3>Río + cultura · 2 días</h3><ol><li>Historia y patrimonio</li><li>Carnaval y arte urbano</li><li>Gran Malecón + Caimán del Río</li><li>Ventana de Campeones + gastronomía</li></ol><button class="btn" style="background:var(--wine);color:white" onclick="buildRoute(2)">Armar ruta</button></div>
+  <div class="route"><div class="num">03</div><h3>BAQ sin prisa · 3 días</h3><ol><li>Centro + Carnaval</li><li>Río + Puerto Mocho + Bocas de Ceniza</li><li>Mallorquín + naturaleza + emprendimientos</li><li>Arte, compras y sabores locales</li></ol><button class="btn" style="background:var(--wine);color:white" onclick="buildRoute(3)">Armar ruta</button></div>
+ </div>
+ <div id="itineraryResult" style="margin-top:25px"></div>
+</section>
+
+<section>
+ <div class="cta"><h2>✨ No vengas solamente a conocer Barranquilla. Ven a vivirla.</h2><p>Guarda tus lugares, arma tu recorrido, descubre negocios locales y comparte la experiencia.</p><a class="btn" style="background:var(--ink);color:white" href="#explorar">Comenzar</a></div>
+</section>
+
+<section id="tips">
+ <div class="sectionhead"><div><h2>💛 Guía rápida del visitante</h2><p class="lead">Información práctica para planear mejor el viaje. Verifica horarios y programación antes de desplazarte.</p></div></div>
+ <div class="tipgrid">
+  <div class="tip"><div class="big">☀️</div><h3>Clima</h3><p>Agua, protector solar, ropa fresca y pausas a la sombra ayudan a disfrutar los recorridos.</p></div>
+  <div class="tip"><div class="big">📅</div><h3>Horarios</h3><p>Museos y espacios naturales pueden tener horarios especiales. Confirma antes de ir.</p></div>
+  <div class="tip"><div class="big">♻️</div><h3>Naturaleza</h3><p>Cuida manglares, ciénagas, playas y espacios públicos; no dejes residuos.</p></div>
+  <div class="tip"><div class="big">📸</div><h3>Recuerdo</h3><p>Busca atardeceres, murales, arquitectura y lugares con historia para contar la ciudad con tus fotos.</p></div>
+ </div>
+</section>
+
+<section>
+ <div class="panel"><h2>🌎 También para visitantes internacionales</h2><p class="lead">El botón <b>EN</b> de arriba cambia los títulos principales y textos de orientación al inglés. Puedes ampliar la traducción desde el mismo archivo HTML para crear una versión completamente bilingüe.</p></div>
+</section>
+</main>
+
+<footer>
+ <div class="footergrid">
+  <div><h2>BAQ SIN FIN</h2><p>Una guía creada para que Barranquilla se descubra, se disfrute y se comparta.</p></div>
+  <div><h3>Proyecto</h3><p class="small">Guía turística interactiva · Barranquilla, Atlántico, Colombia<br>Contenido editable por el equipo.</p></div>
+  <div><h3>Fuentes</h3><p class="small"><a href="https://barranquilla.gov.co/descubre" target="_blank">Alcaldía de Barranquilla · Turismo</a><br><a href="https://barranquilla.gov.co/documento/guia-turistica/" target="_blank">Mapa turístico oficial</a></p></div>
+ </div>
+ <p class="small" style="margin-top:35px">Antes de publicar, verifiquen horarios, tarifas, enlaces, fotografías y datos de contacto de cada negocio.</p>
+</footer>
+
+<div class="modal" id="modal"><div class="modalbox"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const places=[
+["Gran Malecón","naturaleza","🌊","Río","Paseo ribereño de 5,5 km con espacios para caminar, deporte, arte, gastronomía y atardeceres.",10.998,-74.798],
+["Ventana al Mundo","monumento","🪟","Monumento","Uno de los símbolos contemporáneos de Barranquilla.",11.025,-74.851],
+["Ventana de Campeones","monumento","⚽","Fútbol","Monumento ligado a la identidad futbolística de la ciudad.",11.001,-74.804],
+["Museo del Carnaval","museo","🎭","Cultura","Experiencia para conocer el origen, transformación y manifestaciones del Carnaval.",10.987,-74.785],
+["Casa del Carnaval","cultura","🎺","Carnaval","Espacio ligado a grupos, tradiciones y memoria carnavalera.",10.987,-74.785],
+["Centro Histórico","historia","🏛️","Historia","Plazas, iglesias y arquitectura que cuentan la historia urbana.",10.983,-74.781],
+["Barrio Abajo","cultura","🎨","Arte urbano","Calles, murales, música y tradición carnavalera.",10.991,-74.790],
+["Barrio El Prado","historia","🏠","Patrimonio","Arquitectura, jardines y memoria urbana.",11.004,-74.793],
+["Bocas de Ceniza","naturaleza","🌊","Río + mar","Paisaje donde el río Magdalena encuentra el Caribe.",11.105,-74.852],
+["Ecoparque Ciénaga de Mallorquín","naturaleza","🌿","Ecosistema","Espacio natural para caminar, observar aves y conocer el ecosistema.",11.035,-74.845],
+["Puerto Mocho","naturaleza","🏖️","Playa","Playa urbana y espacio de encuentro con naturaleza y gastronomía.",11.047,-74.847],
+["Zoológico de Barranquilla","familia","🦁","Familia","Fauna, educación ambiental y conservación.",11.006,-74.813],
+["Plaza de La Paz","historia","🕊️","Plaza","Espacio urbano emblemático del centro.",10.984,-74.787],
+["Catedral María Reina","iglesia","⛪","Patrimonio","Templo emblemático del centro de Barranquilla.",10.986,-74.788],
+["Plaza de San Nicolás","iglesia","⛪","Patrimonio","Conjunto histórico y religioso del centro.",10.981,-74.778],
+["Museo de Arte Moderno","museo","🖼️","Arte","Espacio para acercarse al arte moderno y contemporáneo.",11.002,-74.805],
+["MAPUKA","museo","🏺","Patrimonio","Museo de la Universidad del Norte dedicado al patrimonio cultural.",11.019,-74.850],
+["Monumento a Joe Arroyo","monumento","🎶","Música","Homenaje a una figura de la música del Caribe colombiano.",10.997,-74.800],
+["Monumento a Shakira","monumento","⭐","Barranquillera","Homenaje a una artista barranquillera de reconocimiento internacional.",11.024,-74.852],
+["Mariposas Amarillas","monumento","🦋","Literatura","Monumento inspirado en el imaginario literario del Caribe.",11.002,-74.800],
+["Galería 72","artesania","🧵","Artesanías","Espacio incluido en la guía turística distrital dentro de la oferta artesanal.",11.004,-74.805]
+];
+const categories={all:"Todos",naturaleza:"Naturaleza",monumento:"Monumentos",museo:"Museos",cultura:"Cultura",historia:"Historia",iglesia:"Iglesias",familia:"Familia",artesania:"Artesanías"};
+const businesses=[
+["Galería 72","Artesanías","Punto para descubrir y presentar productos artesanales. Agrega aquí redes, horario y contacto verificados."],
+["Tu emprendimiento","Local","¿Vendes comida, artesanías, diseño, moda, arte o experiencias? Esta tarjeta está pensada para tu negocio."],
+["Operadores turísticos","Experiencias","Agrega aquí agencias y operadores locales, con enlaces oficiales y experiencias verificadas."],
+["Sabores de barrio","Gastronomía","Directorio editable para visibilizar cocineros, dulcerías, restaurantes y negocios familiares."],
+["Creadores del Carnaval","Cultura","Espacio para hacedores, artesanos, músicos, bailarines y proyectos culturales."],
+["Souvenirs BAQ","Recuerdos","Productos inspirados en símbolos de Barranquilla para llevar la ciudad contigo."]
+];
+let currentFilter="all", favorites=JSON.parse(localStorage.getItem("baqFav")||"[]");
+const grid=document.getElementById("placesGrid"), filters=document.getElementById("filters"), search=document.getElementById("search");
+function drawFilters(){filters.innerHTML=Object.entries(categories).map(([k,v])=>`<button class="filter ${k===currentFilter?"active":""}" onclick="setFilter('${k}')">${v}</button>`).join("")}
+function drawPlaces(){
+ let q=search.value.toLowerCase(), arr=places.filter(p=>(currentFilter==="all"||p[1]===currentFilter)&&(!q||p.join(" ").toLowerCase().includes(q)));
+ if(document.getElementById("sort").value==="az")arr.sort((a,b)=>a[0].localeCompare(b[0]));
+ grid.innerHTML=arr.length?arr.map(p=>`<article class="card"><div class="photo"><span class="emoji">${p[2]}</span><button class="heart" onclick="fav('${p[0]}')">${favorites.includes(p[0])?"♥":"♡"}</button></div><div class="body"><span class="tag">${p[3]}</span><h3>${p[0]}</h3><p>${p[4]}</p><div class="cardlinks"><button onclick="detail('${p[0]}')">Más información →</button><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p[0]+" Barranquilla")}">📍 Mapa</a></div></div></article>`).join(""):`<div class="empty">No encontramos ese lugar. Puedes agregarlo al arreglo <b>places</b> del archivo.</div>`;
+}
+function setFilter(k){currentFilter=k;drawFilters();drawPlaces()}
+function fav(n){favorites=favorites.includes(n)?favorites.filter(x=>x!==n):[...favorites,n];localStorage.setItem("baqFav",JSON.stringify(favorites));drawPlaces();updateFav()}
+function updateFav(){document.getElementById("favText").textContent=favorites.length?favorites.join(" · "):"Todavía no has guardado lugares."}
+function showFavorites(){document.getElementById("modalContent").innerHTML="<h2>⭐ Mis favoritos</h2>"+(favorites.length?favorites.map(x=>`<p>• ${x}</p>`).join(""):"<p>Aún no tienes favoritos.</p>");openModal()}
+function detail(n){let p=places.find(x=>x[0]===n);document.getElementById("modalContent").innerHTML=`<div style="font-size:50px">${p[2]}</div><span class="tag">${p[3]}</span><h2>${p[0]}</h2><p class="lead">${p[4]}</p><p><b>Experiencia:</b> Agrega aquí historia, precio, horario, accesibilidad, recomendaciones y datos del lugar.</p><a class="btn" style="background:var(--wine);color:white" target="_blank" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p[0]+" Barranquilla")}">Abrir en Google Maps</a>`;openModal()}
+function openModal(){document.getElementById("modal").classList.add("open")}function closeModal(){document.getElementById("modal").classList.remove("open")}
+search.addEventListener("input",drawPlaces);document.getElementById("sort").addEventListener("change",drawPlaces);
+drawFilters();drawPlaces();updateFav();
+
+const map=L.map("map").setView([11.0,-74.81],12.5);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap contributors"}).addTo(map);
+places.forEach(p=>L.marker([p[4+1],p[5]]).addTo(map).bindPopup(`<b>${p[0]}</b><br>${p[3]}<br><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p[0]+" Barranquilla")}">Cómo llegar</a>`));
+
+function buildRoute(days){
+ const names=days===1?["Centro Histórico","Museo del Carnaval","Barrio Abajo","Ventana al Mundo","Gran Malecón"]:days===2?["Centro Histórico","Museo del Carnaval","Barrio Abajo","Gran Malecón","Ventana de Campeones","Zoológico de Barranquilla"]:["Centro Histórico","Museo del Carnaval","Gran Malecón","Puerto Mocho","Bocas de Ceniza","Ecoparque Ciénaga de Mallorquín","Galería 72"];
+ document.getElementById("itineraryResult").innerHTML=`<div class="itinerary">${Array.from({length:days},(_,i)=>`<div class="day"><h3>Día ${i+1}</h3>${names.slice(Math.floor(names.length/days)*i,Math.floor(names.length/days)*(i+1)+(i===days-1?names.length%days:0)).map((x,j)=>`<div class="time"><b>${["9:00 a. m.","11:30 a. m.","2:00 p. m.","5:00 p. m."][j%4]}</b><br>${x}</div>`).join("")}</div>`).join("")}</div>`;
+}
+function toggleDark(){document.body.classList.toggle("dark");localStorage.setItem("baqDark",document.body.classList.contains("dark"))}
+if(localStorage.getItem("baqDark")==="true")document.body.classList.add("dark");
+let english=false;
+function toggleLang(){english=!english;document.getElementById("langBtn").textContent=english?"ES":"EN";document.getElementById("exploreTitle").textContent=english?"Discover your Barranquilla":"Descubre tu Barranquilla";document.querySelector("#mapa h2").textContent=english?"🗺️ Barranquilla, your way":"🗺️ Barranquilla, a tu manera";document.querySelector("#rutas h2").textContent=english?"🧭 Choose your adventure":"🧭 Elige tu aventura"}
+document.getElementById("bizGrid").innerHTML=businesses.map(b=>`<article class="biz"><small>${b[1].toUpperCase()}</small><h3>${b[0]}</h3><p>${b[2]}</p><button class="btn" style="background:var(--gold)" onclick="detail('${b[0]}')">Ver ficha</button></article>`).join("");
+</script>
+</body>
+</html>
